@@ -7,6 +7,8 @@
 - [x] Create .mill/initialized
 - [x] Update README.md with setup and build instructions
 - [x] Add proper menu bar icon (clock icon, template image for macOS)
+- [x] Verify all PROJECT.md goals are met
+- [x] Disable mill workflow (project complete!)
 
 ## Future Tasks (nice-to-have)
 - [ ] Add tests for core functionality
