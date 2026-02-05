@@ -6,11 +6,9 @@
 - [x] Create preferences.html with timezone management UI
 - [x] Create .mill/initialized
 - [x] Update README.md with setup and build instructions
+- [x] Add proper menu bar icon (clock icon, template image for macOS)
 
-## In Progress
-- [ ] Add proper menu bar icon (currently using empty icon)
-
-## Future Tasks
+## Future Tasks (nice-to-have)
 - [ ] Add tests for core functionality
 - [ ] Test on actual macOS environment
 - [ ] Improve timezone selection (searchable dropdown)

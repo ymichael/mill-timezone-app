@@ -22,3 +22,18 @@
 - Preferences are stored in Electron's userData folder as preferences.json
 - Default timezones: New York, London, Tokyo
 - Time updates every 60 seconds in the menu bar
+
+## Run 2 - Add menu bar icon
+- Created an 18x18 PNG clock icon at src/assets/iconTemplate.png
+- Updated main.js to load the icon and mark it as a template image (for macOS light/dark mode support)
+- All PROJECT.md goals are now met:
+  1. ✅ Menu bar icon shows current time (uses setTitle with clock icon)
+  2. ✅ Clicking shows dropdown with all configured timezones
+  3. ✅ Preferences window to add/remove timezones
+  4. ✅ App starts on login option
+  5. ✅ README with setup and build instructions
+
+### Notes for next run
+- All core goals are complete
+- Consider disabling the workflow if no further improvements needed
+- Nice-to-have improvements: tests, 24h format option, searchable timezone dropdown

@@ -129,8 +129,11 @@ function openPreferences() {
 }
 
 function createTray() {
-  // Create a simple icon (1x1 transparent pixel as placeholder)
-  const icon = nativeImage.createEmpty();
+  // Load the clock icon for the tray
+  const iconPath = path.join(__dirname, 'assets', 'iconTemplate.png');
+  const icon = nativeImage.createFromPath(iconPath);
+  // Mark as template so it adapts to light/dark menu bar on macOS
+  icon.setTemplateImage(true);
   tray = new Tray(icon);
   tray.setTitle(getLocalTime());
   tray.setToolTip('Timezone Menubar');
