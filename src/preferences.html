@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Preferences</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+      margin: 0;
+    }
+    h1 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .section {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .section-title {
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #555;
+    }
+    #timezone-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    #timezone-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+    #timezone-list li:last-child {
+      border-bottom: none;
+    }
+    .remove-btn {
+      background: #ff5f57;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 10px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .remove-btn:hover {
+      background: #ff3b30;
+    }
+    .add-form {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .add-form input, .add-form select {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .add-btn {
+      background: #007aff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+    .add-btn:hover {
+      background: #0056b3;
+    }
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .save-section {
+      text-align: right;
+    }
+    .save-btn {
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 24px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .save-btn:hover {
+      background: #218838;
+    }
+  </style>
+</head>
+<body>
+  <h1>Timezone Menubar Preferences</h1>
+
+  <div class="section">
+    <div class="section-title">Timezones</div>
+    <ul id="timezone-list"></ul>
+    <div class="add-form">
+      <input type="text" id="new-label" placeholder="Label (e.g., Paris)">
+      <select id="new-timezone">
+        <option value="">Select timezone...</option>
+        <option value="America/New_York">America/New_York</option>
+        <option value="America/Los_Angeles">America/Los_Angeles</option>
+        <option value="America/Chicago">America/Chicago</option>
+        <option value="America/Denver">America/Denver</option>
+        <option value="America/Toronto">America/Toronto</option>
+        <option value="America/Vancouver">America/Vancouver</option>
+        <option value="America/Sao_Paulo">America/Sao_Paulo</option>
+        <option value="Europe/London">Europe/London</option>
+        <option value="Europe/Paris">Europe/Paris</option>
+        <option value="Europe/Berlin">Europe/Berlin</option>
+        <option value="Europe/Amsterdam">Europe/Amsterdam</option>
+        <option value="Europe/Rome">Europe/Rome</option>
+        <option value="Europe/Madrid">Europe/Madrid</option>
+        <option value="Europe/Moscow">Europe/Moscow</option>
+        <option value="Asia/Tokyo">Asia/Tokyo</option>
+        <option value="Asia/Shanghai">Asia/Shanghai</option>
+        <option value="Asia/Hong_Kong">Asia/Hong_Kong</option>
+        <option value="Asia/Singapore">Asia/Singapore</option>
+        <option value="Asia/Dubai">Asia/Dubai</option>
+        <option value="Asia/Kolkata">Asia/Kolkata</option>
+        <option value="Asia/Seoul">Asia/Seoul</option>
+        <option value="Australia/Sydney">Australia/Sydney</option>
+        <option value="Australia/Melbourne">Australia/Melbourne</option>
+        <option value="Pacific/Auckland">Pacific/Auckland</option>
+        <option value="Pacific/Honolulu">Pacific/Honolulu</option>
+        <option value="UTC">UTC</option>
+      </select>
+      <button class="add-btn" id="add-btn">Add</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">General</div>
+    <label class="checkbox-label">
+      <input type="checkbox" id="start-on-login">
+      Start on login
+    </label>
+  </div>
+
+  <div class="save-section">
+    <button class="save-btn" id="save-btn">Save</button>
+  </div>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    let preferences = {
+      timezones: [],
+      startOnLogin: false
+    };
+
+    const timezoneList = document.getElementById('timezone-list');
+    const newLabel = document.getElementById('new-label');
+    const newTimezone = document.getElementById('new-timezone');
+    const addBtn = document.getElementById('add-btn');
+    const startOnLogin = document.getElementById('start-on-login');
+    const saveBtn = document.getElementById('save-btn');
+
+    function renderTimezones() {
+      timezoneList.innerHTML = '';
+      preferences.timezones.forEach((tz, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span>${tz.label} (${tz.id})</span>
+          <button class="remove-btn" data-index="${index}">Remove</button>
+        `;
+        timezoneList.appendChild(li);
+      });
+
+      // Add remove handlers
+      document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const index = parseInt(e.target.dataset.index);
+          preferences.timezones.splice(index, 1);
+          renderTimezones();
+        });
+      });
+    }
+
+    addBtn.addEventListener('click', () => {
+      const label = newLabel.value.trim();
+      const timezone = newTimezone.value;
+
+      if (label && timezone) {
+        preferences.timezones.push({ id: timezone, label: label });
+        newLabel.value = '';
+        newTimezone.value = '';
+        renderTimezones();
+      }
+    });
+
+    saveBtn.addEventListener('click', async () => {
+      preferences.startOnLogin = startOnLogin.checked;
+      await ipcRenderer.invoke('save-preferences', preferences);
+      window.close();
+    });
+
+    // Load preferences on start
+    async function init() {
+      preferences = await ipcRenderer.invoke('get-preferences');
+      startOnLogin.checked = preferences.startOnLogin;
+      renderTimezones();
+    }
+
+    init();
+  </script>
+</body>
+</html>

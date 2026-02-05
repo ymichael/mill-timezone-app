@@ -1,0 +1,29 @@
+{
+  "name": "timezone-menubar",
+  "version": "1.0.0",
+  "description": "A macOS menu bar app that displays the current time in different timezones",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --mac",
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.timezone.menubar",
+    "productName": "Timezone Menubar",
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": "dmg"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ]
+  }
+}
